@@ -2,38 +2,36 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LockBox.MainPage"
-             Title="LockBox">
+             Title="">
+    <VerticalStackLayout>
+        <!-- Header -->
+        <Label Text="LockBox" Style="{StaticResource Headline}" SemanticProperties.HeadingLevel="Level1" />
 
-    <ScrollView>
-        <VerticalStackLayout Padding="30,0" Spacing="25">
-
-            <!-- When no lockbox is loaded -->
-            <VerticalStackLayout x:Name="NoBoxLoadedLayout" Spacing="15" IsVisible="True">
-                <Label Text="LockBox" Style="{StaticResource Headline}" SemanticProperties.HeadingLevel="Level1" />
-                <Label Text="Create a new lockbox or open an existing .box file." Style="{StaticResource SubHeadline}" />
-                <Button x:Name="OpenLockBoxBtn" Text="Open lockbox" Clicked="OnOpenLockBoxClicked" HorizontalOptions="Fill" />
-                <Button x:Name="CreateLockBoxBtn" Text="Create new lockbox" Clicked="OnCreateLockBoxClicked" HorizontalOptions="Fill" />
-            </VerticalStackLayout>
-
-            <!-- When a lockbox is loaded -->
-            <VerticalStackLayout x:Name="BoxLoadedLayout" Spacing="15" IsVisible="False">
-                <Label x:Name="LoadedBoxPathLabel" Text="" Style="{StaticResource SubHeadline}" LineBreakMode="TailTruncation" />
-                <Button x:Name="AddFileBtn" Text="Add file to lockbox" Clicked="OnAddFileClicked" HorizontalOptions="Fill" />
-                <Label Text="Files in this lockbox:" FontAttributes="Bold" />
-                <CollectionView x:Name="FilesCollectionView" SelectionMode="Single" SelectionChanged="OnFileSelectionChanged">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Padding="0,8" ColumnDefinitions="*,Auto">
+        <!-- Main menu-->
+        <HorizontalStackLayout x:Name="NoBoxLoadedLayout" Spacing="15" IsVisible="True" HorizontalOptions="Center">
+            <Button x:Name="CreateLockBoxBtn" Text="Create new lockbox" Clicked="OnCreateLockBoxClicked" HorizontalOptions="Fill" />
+            <Button x:Name="OpenLockBoxBtn" Text="Open lockbox" Clicked="OnOpenLockBoxClicked" HorizontalOptions="Fill" />
+        </HorizontalStackLayout>
+        <!-- When a lockbox is loaded -->
+        <VerticalStackLayout x:Name="BoxLoadedComponent" Spacing="15" IsVisible="False">
+            <Label x:Name="LoadedBoxPathLabel" Text="" LineBreakMode="TailTruncation" />
+            <Button x:Name="AddFileBtn" Text="Add file to lockbox" Clicked="OnAddFileClicked" HorizontalOptions="Fill" />
+            <Label Text="Files in this lockbox:" FontAttributes="Bold" />
+            <CollectionView x:Name="FilesCollectionView" SelectionMode="Single" SelectionChanged="OnFileSelectionChanged">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border StrokeThickness="1" Padding="5">
+                            <Grid Padding="0,8" ColumnDefinitions="*,Auto,Auto">
                                 <Label Grid.Column="0" Text="{Binding Filename}" VerticalOptions="Center" LineBreakMode="TailTruncation" />
-                                <Button Grid.Column="1" Text="Restore" Clicked="OnRestoreFileClicked" IsEnabled="{Binding HasPrivateKey}" />
+                                <Button Grid.Column="1" Text="Remove" Clicked="OnRemoveFileClicked" />
+                                <Button Grid.Column="2" Text="Restore" Clicked="OnRestoreFileClicked" IsEnabled="{Binding HasPrivateKey}" />
                             </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                <Button x:Name="CloseBoxBtn" Text="Close lockbox" Clicked="OnCloseLockBoxClicked" HorizontalOptions="Fill" />
-            </VerticalStackLayout>
-
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button x:Name="CloseBoxBtn" Text="Close lockbox" Clicked="OnCloseLockBoxClicked" HorizontalOptions="Fill" />
         </VerticalStackLayout>
-    </ScrollView>
+    </VerticalStackLayout>
 
 </ContentPage>

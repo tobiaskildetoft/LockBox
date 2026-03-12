@@ -3,13 +3,14 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
 using LockBox.Models;
 using LockBox.Services;
+using LockBox.Subviews;
 using LockBox.ViewModels;
 using Microsoft.Maui.Storage;
 
 /// TODOs:
 /// Fix toasts so info can be communicated
 /// DONE - Disable restore button when key missing
-/// Move to proper viewmodel binding
+/// Move to proper viewmodel binding. Consider https://github.com/matt-goldman/Plugin.Maui.SmartNavigation
 /// add option to point to key when not found usual place or with usual name
 /// Add option for mass restore by picking folder
 /// Add option to attach created lockbox to email from app
@@ -17,6 +18,7 @@ using Microsoft.Maui.Storage;
 /// various checks (checksum for files?)
 /// cleanup code
 /// add unit tests
+/// Add option to remove files (also without key)
 
 namespace LockBox
 {
@@ -44,7 +46,7 @@ namespace LockBox
             var service = GetService();
             if (service == null)
             {
-                // await Toast.Make("LockBox service is not available.").Show();
+                // TODO
                 return;
             }
 
@@ -69,7 +71,7 @@ namespace LockBox
                 string fileName = result.FileName ?? path;
                 if (!fileName.EndsWith(".box", StringComparison.OrdinalIgnoreCase) && !path.EndsWith(".box", StringComparison.OrdinalIgnoreCase))
                 {
-                    // await Toast.Make("Please select a .box file.").Show();
+                    // TODO
                     return;
                 }
 
@@ -91,16 +93,14 @@ namespace LockBox
 
                 _displayFiles.Clear();
                 foreach (var f in doc.Files)
-                    _displayFiles.Add(FileEntryViewModel.FromFileEntry(f, hasPrivateKey));
+                    _displayFiles.Add(new FileEntryViewModel(f, hasPrivateKey));
 
                 LoadedBoxPathLabel.Text = path;
-                NoBoxLoadedLayout.IsVisible = false;
-                BoxLoadedLayout.IsVisible = true;
-                // await Toast.Make("Lockbox opened.").Show();
+                BoxLoadedComponent.IsVisible = true;
             }
             catch (Exception ex)
             {
-                // await Toast.Make($"Error: {ex.Message}").Show();
+                // TODO
             }
         }
 
@@ -109,8 +109,7 @@ namespace LockBox
             _loadedDocument = null;
             _loadedBoxFilePath = null;
             _displayFiles.Clear();
-            NoBoxLoadedLayout.IsVisible = true;
-            BoxLoadedLayout.IsVisible = false;
+            BoxLoadedComponent.IsVisible = false;
         }
 
         private async void OnCreateLockBoxClicked(object? sender, EventArgs e)
@@ -118,7 +117,6 @@ namespace LockBox
             var service = GetService();
             if (service == null)
             {
-                // await Toast.Make("LockBox service is not available.").Show();
                 return;
             }
 
@@ -134,17 +132,15 @@ namespace LockBox
                 if (!fileSaverResult.IsSuccessful)
                 {
                     string message = fileSaverResult.Exception?.Message ?? "Save was cancelled or failed.";
-                    // await Toast.Make($"Lockbox was not saved: {message}").Show();
+                    // TODO
                     return;
                 }
 
                 await service.SavePrivateKeyAsync(result.PrivateKeyPem, result.PublicKeyDigestHex);
-
-                // await Toast.Make($"Lockbox created at {fileSaverResult.FilePath}. Key saved for this lockbox.").Show();
             }
             catch (Exception ex)
             {
-                // await Toast.Make($"Error: {ex.Message}").Show();
+                // TODO
             }
             finally
             {
@@ -178,12 +174,11 @@ namespace LockBox
                 string? privateKeyPem = await service.TryGetPrivateKeyAsync(_loadedDocument.PublicKeyDigest);
                 var hasPrivateKey = privateKeyPem != null;
 
-                _displayFiles.Add(FileEntryViewModel.FromFileEntry(entry, hasPrivateKey));
-                // await Toast.Make($"Added: {entry.Filename}").Show();
+                _displayFiles.Add(new FileEntryViewModel(entry, hasPrivateKey));
             }
             catch (Exception ex)
             {
-                // await Toast.Make($"Error: {ex.Message}").Show();
+                // TODO
             }
             finally
             {
@@ -199,38 +194,73 @@ namespace LockBox
         private async void OnRestoreFileClicked(object? sender, EventArgs e)
         {
             if (_loadedDocument == null || sender is not BindableObject bindable)
+            {
                 return;
-            var entry = bindable.BindingContext as FileEntry;
-            if (entry == null)
+            }
+            if (bindable.BindingContext is not FileEntryViewModel fileEntryViewModel)
+            {
                 return;
+            }
+            var fileEntry = fileEntryViewModel.AsFileEntry();
+
             var service = GetService();
             if (service == null)
             {
-                // await Toast.Make("LockBox service is not available.").Show();
+                // TODO
                 return;
             }
 
             string? privateKeyPem = await service.TryGetPrivateKeyAsync(_loadedDocument.PublicKeyDigest);
             if (string.IsNullOrEmpty(privateKeyPem))
             {
-                // await Toast.Make("No private key found for this lockbox. You need the key that was created with this lockbox to restore files.").Show();
+                // TODO: Just fail silently? (button should be disabled)
                 return;
             }
 
             try
             {
-                byte[] content = await service.DecryptFileContentAsync(entry, privateKeyPem);
+                byte[] content = await service.DecryptFileContentAsync(fileEntry, privateKeyPem);
                 using var stream = new MemoryStream(content);
-                var fileSaverResult = await FileSaver.Default.SaveAsync(entry.Filename, stream, CancellationToken.None);
-                // if (fileSaverResult.IsSuccessful)
-                    // await Toast.Make($"Restored to {fileSaverResult.FilePath}").Show();
-                // else
-                    // await Toast.Make($"Save failed: {fileSaverResult.Exception?.Message ?? "Unknown"}").Show();
+                var fileSaverResult = await FileSaver.Default.SaveAsync(fileEntry.Filename, stream, CancellationToken.None);
+                // TODO: Fix potentially nonsuccessful filesave
             }
             catch (Exception ex)
             {
-                // await Toast.Make($"Decrypt failed: {ex.Message}").Show();
+                // TODO
             }
+        }
+
+        private async void OnRemoveFileClicked(object? sender, EventArgs e)
+        {
+            if (_loadedDocument == null || sender is not BindableObject bindable)
+            {
+                return; 
+            }
+            if (bindable.BindingContext is not FileEntryViewModel fileEntryViewModel)
+            {
+                return; 
+            }
+
+            var fileEntry = fileEntryViewModel.AsFileEntry();
+            
+            var service = GetService();
+            if (service == null)
+            {
+                // TODO
+                return;
+            }
+
+            _displayFiles.Remove(fileEntryViewModel);
+
+            // TODO: Remove file from saved file
+            // TODO: Consider warning or similar since file cannot be recovered. Or maybe make it reversible until saving?
+        }
+
+
+
+        private void SetRightSideVisibility(RightSideViews rightSideViews)
+        {
+            // TODO
         }
     }
 }

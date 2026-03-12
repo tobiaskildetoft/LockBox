@@ -8,17 +8,30 @@ namespace LockBox.ViewModels
 {
     internal class FileEntryViewModel
     {
-        public string Filename { get; set; } = string.Empty;
+        private FileEntry _fileEntry;
 
-        public bool HasPrivateKey { get; set; } = false;
-
-        internal static FileEntryViewModel FromFileEntry(FileEntry fileEntry, bool hasPrivateKey)
+        internal FileEntryViewModel(FileEntry fileEntry, bool hasPrivateKey)
         {
-            return new FileEntryViewModel
+            _fileEntry = fileEntry;
+            HasPrivateKey = hasPrivateKey;
+        }
+        public string Filename
+        {
+            get
             {
-                Filename = fileEntry.Filename,
-                HasPrivateKey = hasPrivateKey,
-            };
+                return _fileEntry.Filename; 
+            }
+            set
+            {
+                _fileEntry.Filename = value; 
+            }
+        }
+
+        public bool HasPrivateKey { get; private set; }
+
+        internal FileEntry AsFileEntry()
+        {
+            return _fileEntry;
         }
     }
 }

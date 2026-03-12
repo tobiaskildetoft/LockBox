@@ -1,3 +1,5 @@
 <Solution>
-  <Project Path="LockBox/LockBox.csproj" />
+  <Project Path="LockBox/LockBox.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
 </Solution>
