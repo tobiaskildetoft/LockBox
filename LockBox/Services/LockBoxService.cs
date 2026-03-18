@@ -179,6 +179,11 @@ public sealed class LockBoxService
         }, cancellationToken);
     }
 
+    public void RemoveFileFromLockBox(LockBoxDocument lockBoxDocument, FileEntry fileEntry)
+    {
+        lockBoxDocument.Files.Remove(fileEntry);
+    }
+
     /// <summary>
     /// Decrypts a file entry using the given private key PEM. Returns the raw file content.
     /// </summary>

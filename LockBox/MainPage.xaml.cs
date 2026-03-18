@@ -251,6 +251,8 @@ namespace LockBox
             }
 
             _displayFiles.Remove(fileEntryViewModel);
+            service.RemoveFileFromLockBox(_loadedDocument, fileEntry);
+            await service.SaveDocumentAsync(_loadedDocument, _loadedBoxFilePath);
 
             // TODO: Remove file from saved file
             // TODO: Consider warning or similar since file cannot be recovered. Or maybe make it reversible until saving?

@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="LockBox.Core/LockBox.Core.csproj" Id="e4c258ff-fa78-49a7-8d05-753893061af8" />
   <Project Path="LockBox/LockBox.csproj">
     <Deploy Solution="Debug|*" />
   </Project>
