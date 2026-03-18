@@ -32,6 +32,20 @@
             </CollectionView>
             <Button x:Name="CloseBoxBtn" Text="Close lockbox" Clicked="OnCloseLockBoxClicked" HorizontalOptions="Fill" />
         </VerticalStackLayout>
+        <!-- LoclBox Creation view-->
+        <VerticalStackLayout x:Name="CreateLockBoxView" Spacing="15" IsVisible="False">
+            <Label Text="Create new LockBox" Padding="0,15,0,30" HorizontalOptions="Center"/>
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Label Text="Name" VerticalOptions="Center" Padding="0,0,15,0"/>
+                <Border StrokeThickness="2" Stroke="Blue" StrokeShape="RoundRectangle 40,40,40,40">
+                    <Entry WidthRequest="200" VerticalOptions="Center"/>
+                </Border>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Button Text="Cancel" Margin="0,0,20,0"/>
+                <Button Text="Save"/>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
     </VerticalStackLayout>
 
 </ContentPage>
