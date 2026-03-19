@@ -4,6 +4,8 @@ using LockBox.Core.Models;
 
 namespace LockBox.Core.Services;
 
+// TODO: Remove all references to the filesystem and move those to MAUI part
+
 /// <summary>
 /// Service for creating, loading, and managing lockbox files and keys.
 /// </summary>

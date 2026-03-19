@@ -1,4 +1,4 @@
-﻿using LockBox.Models;
+﻿using LockBox.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +8,7 @@ namespace LockBox.ViewModels
 {
     internal class FileEntryViewModel
     {
-        private FileEntry _fileEntry;
+        private readonly FileEntry _fileEntry;
 
         internal FileEntryViewModel(FileEntry fileEntry, bool hasPrivateKey)
         {

@@ -21,7 +21,8 @@ namespace LockBox
     		builder.Logging.AddDebug();
 #endif
 
-            builder.Services.AddSingleton<LockBox.Services.LockBoxService>();
+            builder.Services.AddSingleton<LockBox.Services.PrivateKeyFileService>();
+            builder.Services.AddSingleton<LockBox.Core.Services.LockBoxService>();
 
             return builder.Build();
         }
