@@ -59,21 +59,6 @@ public sealed class LockBoxService
     }
 
     /// <summary>
-    /// Saves the private key to the app data directory with filename {publicKeyDigestHex}.key
-    /// so it can be found later when the public key (or .box file) is known.
-    /// Path is resolved on the calling thread (e.g. UI thread) to avoid platform crashes.
-    /// </summary>
-    public Task SavePrivateKeyAsync(string privateKeyPem, string publicKeyDigestHex, CancellationToken cancellationToken = default)
-    {
-        string path = Path.Combine(FileSystem.Current.AppDataDirectory, $"{publicKeyDigestHex}.key");
-        return Task.Run(() =>
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            File.WriteAllText(path, privateKeyPem);
-        }, cancellationToken);
-    }
-
-    /// <summary>
     /// Loads a lockbox document from a .box file path.
     /// </summary>
     public Task<LockBoxDocument> LoadDocumentAsync(string boxFilePath, CancellationToken cancellationToken = default)
@@ -113,23 +98,6 @@ public sealed class LockBoxService
             cancellationToken.ThrowIfCancellationRequested();
             byte[] json = JsonSerializer.SerializeToUtf8Bytes(document, JsonOptions);
             File.WriteAllBytes(boxFilePath, json);
-        }, cancellationToken);
-    }
-
-    /// <summary>
-    /// Tries to load the private key for the given public key digest from app data.
-    /// Returns null if the key file is not found.
-    /// Path is resolved on the calling thread to avoid platform crashes.
-    /// </summary>
-    public Task<string?> TryGetPrivateKeyAsync(string publicKeyDigestHex, CancellationToken cancellationToken = default)
-    {
-        string path = Path.Combine(FileSystem.Current.AppDataDirectory, $"{publicKeyDigestHex}.key");
-        return Task.Run(() =>
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (!File.Exists(path))
-                return (string?)null;
-            return File.ReadAllText(path);
         }, cancellationToken);
     }
 
