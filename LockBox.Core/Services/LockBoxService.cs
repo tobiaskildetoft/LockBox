@@ -4,7 +4,10 @@ using LockBox.Core.Models;
 
 namespace LockBox.Core.Services;
 
-// TODO: Remove all references to the filesystem and move those to MAUI part
+/// TODOs: 
+/// Worth keeping file system things in the Core? And just move parts specific to app paths
+/// Remove all references to the filesystem and move those to MAUI part
+/// Consider if there is any actual value in doing these as async
 
 /// <summary>
 /// Service for creating, loading, and managing lockbox files and keys.
@@ -63,7 +66,7 @@ public sealed class LockBoxService
     /// <summary>
     /// Loads a lockbox document from a .box file path.
     /// </summary>
-    public Task<LockBoxDocument> LoadDocumentAsync(string boxFilePath, CancellationToken cancellationToken = default)
+    public Task<LockBoxDocument> LoadDocumentFromFileAsync(string boxFilePath, CancellationToken cancellationToken = default)
     {
         return Task.Run(() =>
         {
@@ -76,7 +79,7 @@ public sealed class LockBoxService
     /// <summary>
     /// Loads a lockbox document from a stream (e.g. from FileResult.OpenReadAsync on Android).
     /// </summary>
-    public async Task<LockBoxDocument> LoadDocumentAsync(Stream stream, CancellationToken cancellationToken = default)
+    public async Task<LockBoxDocument> LoadDocumentFromStreamAsync(Stream stream, CancellationToken cancellationToken = default)
     {
         using var reader = new StreamReader(stream);
         string json = await reader.ReadToEndAsync(cancellationToken);

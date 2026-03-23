@@ -68,12 +68,12 @@ namespace LockBox
             LockBoxDocument doc;
             try
             {
-                doc = await _lockBoxService.LoadDocumentAsync(path);
+                doc = await _lockBoxService.LoadDocumentFromFileAsync(path);
             }
             catch
             {
                 using var stream = await result.OpenReadAsync();
-                doc = await _lockBoxService.LoadDocumentAsync(stream);
+                doc = await _lockBoxService.LoadDocumentFromStreamAsync(stream);
             }
             _loadedDocument = doc;
             _loadedBoxFilePath = path;
