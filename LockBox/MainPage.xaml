@@ -9,7 +9,7 @@
 
         <!-- Main menu-->
         <HorizontalStackLayout x:Name="NoBoxLoadedLayout" Spacing="15" IsVisible="True" HorizontalOptions="Center">
-            <Button x:Name="CreateLockBoxBtn" Text="Create new lockbox" Clicked="OnCreateLockBoxClicked" HorizontalOptions="Fill" />
+            <Button x:Name="CreateLockBoxBtn" Text="Create new lockbox" Clicked="OnCreateLockBoxMEnuButtonClicked" HorizontalOptions="Fill" />
             <Button x:Name="OpenLockBoxBtn" Text="Open lockbox" Clicked="OnOpenLockBoxClicked" HorizontalOptions="Fill" />
         </HorizontalStackLayout>
         <!-- When a lockbox is loaded -->
@@ -38,12 +38,12 @@
             <HorizontalStackLayout HorizontalOptions="Center">
                 <Label Text="Name" VerticalOptions="Center" Padding="0,0,15,0"/>
                 <Border StrokeThickness="2" Stroke="Blue" StrokeShape="RoundRectangle 40,40,40,40">
-                    <Entry WidthRequest="200" VerticalOptions="Center"/>
+                    <Entry WidthRequest="200" VerticalOptions="Center" x:Name="LockBoxNameField"/>
                 </Border>
             </HorizontalStackLayout>
             <HorizontalStackLayout HorizontalOptions="Center">
-                <Button Text="Cancel" Margin="0,0,20,0"/>
-                <Button Text="Save"/>
+                <Button Text="Cancel" Margin="0,0,20,0" Clicked="OnCancelCreateClicked"/>
+                <Button Text="Save" Clicked="OnCreateLockBoxClicked"/>
             </HorizontalStackLayout>
         </VerticalStackLayout>
     </VerticalStackLayout>

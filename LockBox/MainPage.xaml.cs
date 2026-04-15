@@ -97,14 +97,28 @@ namespace LockBox
             BoxLoadedComponent.IsVisible = false;
         }
 
-        private async void OnCreateLockBoxClicked(object? sender, EventArgs e)
+        private async void OnCreateLockBoxMEnuButtonClicked(object? sender, EventArgs e)
         {
             OpenLockBoxBtn.IsEnabled = false;
             CreateLockBoxBtn.IsEnabled = false;
+            CreateLockBoxView.IsVisible = true;
+        }
+
+        private async void OnCancelCreateClicked(object? sender, EventArgs e)
+        {
+            CreateLockBoxView.IsVisible = false;
+            OpenLockBoxBtn.IsEnabled = true;
+            CreateLockBoxBtn.IsEnabled = true;
+            LockBoxNameField.Text = string.Empty;
+        }
+
+        private async void OnCreateLockBoxClicked(object? sender, EventArgs e)
+        {
             CreateLockBoxResult result = await _lockBoxService.CreateNewLockBoxAsync();
+            var newLockBoxName = String.IsNullOrEmpty(LockBoxNameField.Text) ? "LoclBox" : LockBoxNameField.Text;
 
             var stream = new MemoryStream(result.BoxContent);
-            var fileSaverResult = await FileSaver.Default.SaveAsync("LockBox.box", stream, CancellationToken.None);
+            var fileSaverResult = await FileSaver.Default.SaveAsync($"{newLockBoxName}.box", stream, CancellationToken.None);
 
             if (!fileSaverResult.IsSuccessful)
             {
@@ -117,6 +131,8 @@ namespace LockBox
 
             OpenLockBoxBtn.IsEnabled = true;
             CreateLockBoxBtn.IsEnabled = true;
+            CreateLockBoxView.IsVisible = false;
+            LockBoxNameField.Text = string.Empty;
         }
 
         private async void OnAddFileClicked(object? sender, EventArgs e)
