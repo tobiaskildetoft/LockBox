@@ -42,6 +42,7 @@ namespace LockBox
 
         private async void OnOpenLockBoxClicked(object? sender, EventArgs e)
         {
+            ResetViewsAndInput();
             var pickOptions = new PickOptions
             {
                 PickerTitle = "Open lockbox file",
@@ -81,41 +82,36 @@ namespace LockBox
             string? privateKeyPem = await _fileService.TryGetPrivateKeyAsync(_loadedDocument.PublicKeyDigest);
             var hasPrivateKey = privateKeyPem != null;
 
-            _displayFiles.Clear();
             foreach (var f in doc.Files)
+            {
                 _displayFiles.Add(new FileEntryViewModel(f, hasPrivateKey));
+            }
 
             LoadedBoxPathLabel.Text = path;
+            LoadedBoxNameLabel.Text = _loadedDocument.Name;
             BoxLoadedComponent.IsVisible = true;
         }
 
         private void OnCloseLockBoxClicked(object? sender, EventArgs e)
         {
-            _loadedDocument = null;
-            _loadedBoxFilePath = null;
-            _displayFiles.Clear();
-            BoxLoadedComponent.IsVisible = false;
+            ResetViewsAndInput();
         }
 
         private async void OnCreateLockBoxMEnuButtonClicked(object? sender, EventArgs e)
         {
-            OpenLockBoxBtn.IsEnabled = false;
-            CreateLockBoxBtn.IsEnabled = false;
+            ResetViewsAndInput();
             CreateLockBoxView.IsVisible = true;
         }
 
         private async void OnCancelCreateClicked(object? sender, EventArgs e)
         {
-            CreateLockBoxView.IsVisible = false;
-            OpenLockBoxBtn.IsEnabled = true;
-            CreateLockBoxBtn.IsEnabled = true;
-            LockBoxNameField.Text = string.Empty;
+            ResetViewsAndInput();
         }
 
         private async void OnCreateLockBoxClicked(object? sender, EventArgs e)
         {
-            CreateLockBoxResult result = await _lockBoxService.CreateNewLockBoxAsync();
             var newLockBoxName = String.IsNullOrEmpty(LockBoxNameField.Text) ? "LoclBox" : LockBoxNameField.Text;
+            CreateLockBoxResult result = await _lockBoxService.CreateNewLockBoxAsync(newLockBoxName);
 
             var stream = new MemoryStream(result.BoxContent);
             var fileSaverResult = await FileSaver.Default.SaveAsync($"{newLockBoxName}.box", stream, CancellationToken.None);
@@ -128,11 +124,7 @@ namespace LockBox
             }
 
             await _fileService.SavePrivateKeyAsync(result.PrivateKeyPem, result.PublicKeyDigestHex);
-
-            OpenLockBoxBtn.IsEnabled = true;
-            CreateLockBoxBtn.IsEnabled = true;
-            CreateLockBoxView.IsVisible = false;
-            LockBoxNameField.Text = string.Empty;
+            ResetViewsAndInput();
         }
 
         private async void OnAddFileClicked(object? sender, EventArgs e)
@@ -215,6 +207,16 @@ namespace LockBox
 
             // TODO: Remove file from saved file
             // TODO: Consider warning or similar since file cannot be recovered. Or maybe make it reversible until saving?
+        }
+
+        private void ResetViewsAndInput()
+        {
+            _loadedBoxFilePath = null;
+            _loadedDocument = null;
+            BoxLoadedComponent.IsVisible = false;
+            CreateLockBoxView.IsVisible = false;
+            LockBoxNameField.Text = string.Empty;
+            _displayFiles.Clear();
         }
     }
 }

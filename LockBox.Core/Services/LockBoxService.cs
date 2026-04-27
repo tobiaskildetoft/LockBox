@@ -29,7 +29,7 @@ public sealed class LockBoxService
     /// Creates a new RSA keypair and builds the .box document (JSON with public key and empty files list).
     /// The caller should save the .box content via FileSaver, then call SavePrivateKeyAsync on success.
     /// </summary>
-    public Task<CreateLockBoxResult> CreateNewLockBoxAsync(CancellationToken cancellationToken = default)
+    public Task<CreateLockBoxResult> CreateNewLockBoxAsync(string name, CancellationToken cancellationToken = default)
     {
         return Task.Run(() =>
         {
@@ -46,6 +46,7 @@ public sealed class LockBoxService
             var document = new LockBoxDocument
             {
                 Version = 1,
+                Name = name,
                 Algorithm = "RSA-OAEP-2048",
                 PublicKeyPem = publicKeyPem,
                 PublicKeyDigest = publicKeyDigestHex,

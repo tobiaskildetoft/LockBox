@@ -14,6 +14,7 @@
         </HorizontalStackLayout>
         <!-- When a lockbox is loaded -->
         <VerticalStackLayout x:Name="BoxLoadedComponent" Spacing="15" IsVisible="False">
+            <Label x:Name="LoadedBoxNameLabel" Text="" LineBreakMode="TailTruncation" Style="{StaticResource SubHeadline}" SemanticProperties.HeadingLevel="Level3" />
             <Label x:Name="LoadedBoxPathLabel" Text="" LineBreakMode="TailTruncation" />
             <Button x:Name="AddFileBtn" Text="Add file to lockbox" Clicked="OnAddFileClicked" HorizontalOptions="Fill" />
             <Label Text="Files in this lockbox:" FontAttributes="Bold" />
